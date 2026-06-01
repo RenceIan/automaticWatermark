@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Automatic Watermark</title>
+    <style>
+      body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+      form { display: grid; gap: 14px; border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+      label { font-weight: 600; }
+      button { width: fit-content; padding: 10px 16px; border: none; border-radius: 6px; background: #2d7ef7; color: #fff; cursor: pointer; }
+      button:hover { background: #1965d8; }
+      small { color: #555; }
+    </style>
+  </head>
+  <body>
+    <h1>Automatic Watermark</h1>
+    <p>Upload multiple images, add your chosen watermark text, and download all edited images as one ZIP file.</p>
+
+    <form action="/process" method="post" enctype="multipart/form-data">
+      <div>
+        <label for="images">Choose images</label><br />
+        <input id="images" name="images" type="file" accept="image/*" multiple required />
+      </div>
+
+      <div>
+        <label for="watermark_text">Watermark text</label><br />
+        <input id="watermark_text" name="watermark_text" type="text" required placeholder="Your watermark" />
+      </div>
+
+      <div>
+        <label for="position">Watermark position</label><br />
+        <select id="position" name="position">
+          <option value="bottom-right" selected>Bottom right</option>
+          <option value="bottom-left">Bottom left</option>
+          <option value="top-right">Top right</option>
+          <option value="top-left">Top left</option>
+          <option value="center">Center</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="opacity">Opacity (20-255)</label><br />
+        <input id="opacity" name="opacity" type="number" min="20" max="255" value="140" />
+      </div>
+
+      <small>After submit, your browser downloads a ZIP containing all watermarked images.</small>
+      <button type="submit">Process and Download ZIP</button>
+    </form>
+  </body>
+</html>
