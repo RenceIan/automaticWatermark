@@ -1,0 +1,46 @@
+PROJECT TITLE: Automatic Watermark Generator
+
+DESCRIPTION:
+This project is a web-based application that automatically adds watermarks to images. Users can upload one or multiple images at the same time, and the system will place a watermark on each image automatically.
+
+FEATURES:
+
+* Upload single or multiple images.
+* Upload a custom watermark logo (PNG) or use text as a watermark.
+* Automatically apply the watermark to all uploaded images.
+* Adjustable watermark position (top-left, top-right, center, bottom-left, bottom-right).
+* Adjustable watermark opacity and size.
+* Preview the watermarked images before downloading.
+* Download all processed images individually or as a ZIP file.
+
+HOW IT WORKS:
+
+1. User uploads one or more images.
+2. User uploads a watermark logo or enters watermark text.
+3. User selects watermark settings.
+4. System processes all images automatically.
+5. Watermarked images are generated.
+6. User downloads the results as a ZIP file.
+
+POSSIBLE TECHNOLOGIES:
+
+* Frontend: HTML, CSS, JavaScript
+* Backend: PHP
+* Image Processing: GD Library or Imagick
+* ZIP Generation: PHP ZipArchive
+* Local Server: XAMPP
+
+BENEFITS:
+
+* Saves time when watermarking many images.
+* Useful for photographers, content creators, online sellers, and businesses.
+* Prevents unauthorized use of images.
+* Easy to use and accessible through a web browser.
+
+FUTURE IMPROVEMENTS:
+
+* Drag and drop image uploads.
+* Batch resizing of images.
+* Custom watermark templates.
+* User accounts and watermark presets.
+* Cloud storage integration.

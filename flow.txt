@@ -1,0 +1,26 @@
+FLOWCHART:
+
+START
+  ↓
+Open Watermark Website
+  ↓
+Upload Multiple Images
+  ↓
+Choose Watermark Type
+  ↓
+Text Watermark or Logo Watermark?
+  ↓
+Set Watermark Position, Size, and Opacity
+  ↓
+Apply Watermark Automatically
+  ↓
+Preview Watermarked Images
+  ↓
+Download Images
+  ↓
+Download as ZIP File?
+  ↓
+YES → Generate ZIP File → Download ZIP
+NO  → Download Images One by One
+  ↓
+END

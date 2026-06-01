@@ -1,0 +1,18 @@
+# Ignore temporary and generated files
+/Awm_*
+/tmp/
+*.zip
+/uploads/
+*.log
+.DS_Store
+.vscode/
+.env
+
+# PHP specific
+composer.lock
+/vendor/
+
+# OS files
+Thumbs.db
+
+e2e/
