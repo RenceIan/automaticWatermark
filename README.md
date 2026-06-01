@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Automatic Watermark Generator
 =================================
 
@@ -18,3 +19,7 @@ How it works
 
 Notes
 - This is a minimal prototype. For production, add stronger validation, authentication, and cleanup.
+=======
+# automaticWatermark
+uploading pictures then adding some watermark
+>>>>>>> a3cce689a92a2ccf89e9e88d47e6af2b2f8ac03f
