@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automatic Watermark Generator</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: rgba(255,255,255,0.88);
+      --text: #172033;
+      --muted: #5e6a82;
+      --accent: #2563eb;
+      --accent-2: #0f766e;
+      --border: rgba(23, 32, 51, 0.12);
+      --shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 24%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.78));
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 24px;
+      padding: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -100px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.2), transparent 65%);
+      pointer-events: none;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      max-width: 62ch;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 1.1rem;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--text);
+      font-size: 0.98rem;
+      outline: none;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    input[type="file"] {
+      width: 100%;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #1d4ed8);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
+    }
+
+    button.secondary {
+      color: var(--text);
+      background: #eef2ff;
+      box-shadow: none;
+      border: 1px solid rgba(37, 99, 235, 0.12);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .thumb {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .thumb .meta {
+      padding: 10px 12px 12px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+    }
+
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .result-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .result-card .meta {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .notice {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Automatic Watermark Generator</h1>
+      <p class="subtitle">Upload multiple photos, add a text or logo watermark directly in your browser, then download everything as a ZIP file. This version runs on GitHub Pages with no PHP or XAMPP.</p>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Watermark settings</h2>
+
+          <div class="field">
+            <label for="images">Choose images</label>
+            <input type="file" id="images" accept="image/*" multiple>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="wmType">Watermark type</label>
+              <select id="wmType">
+                <option value="text">Text</option>
+                <option value="logo">Logo</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="position">Position</label>
+              <select id="position">
+                <option value="bottom-right">Bottom right</option>
+                <option value="bottom-left">Bottom left</option>
+                <option value="top-right">Top right</option>
+                <option value="top-left">Top left</option>
+                <option value="center">Center</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="textGroup" class="field">
+            <label for="wmText">Watermark text</label>
+            <input id="wmText" type="text" value="© My Brand">
+          </div>
+
+          <div id="logoGroup" class="field hidden">
+            <label for="wmLogo">Watermark logo (PNG recommended)</label>
+            <input id="wmLogo" type="file" accept="image/*">
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="opacity">Opacity: <span id="opacityValue">70</span>%</label>
+              <input id="opacity" type="range" min="5" max="100" value="70">
+            </div>
+            <div class="field">
+              <label for="scale">Scale: <span id="scaleValue">20</span>%</label>
+              <input id="scale" type="range" min="5" max="70" value="20">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="color">Text color</label>
+            <input id="color" type="text" value="#ffffff">
+          </div>
+
+          <div class="actions">
+            <button id="processBtn" type="button">Process images</button>
+            <button id="downloadZipBtn" type="button" class="secondary" disabled>Download ZIP</button>
+            <button id="clearBtn" type="button" class="secondary">Clear</button>
+          </div>
+
+          <p class="notice">Tip: GitHub Pages can only host static files, so this version does all watermarking in the browser. It does not need XAMPP, PHP, or a database.</p>
+        </div>
+
+        <div class="card">
+          <h2>Selected images</h2>
+          <div id="preview" class="preview-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:18px;">
+      <h2>Processed output</h2>
+      <div id="results" class="results"></div>
+      <p id="status" class="notice">Choose one or more images to begin.</p>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    const imagesInput = document.getElementById('images');
+    const wmType = document.getElementById('wmType');
+    const wmText = document.getElementById('wmText');
+    const wmLogo = document.getElementById('wmLogo');
+    const textGroup = document.getElementById('textGroup');
+    const logoGroup = document.getElementById('logoGroup');
+    const position = document.getElementById('position');
+    const opacity = document.getElementById('opacity');
+    const opacityValue = document.getElementById('opacityValue');
+    const scale = document.getElementById('scale');
+    const scaleValue = document.getElementById('scaleValue');
+    const color = document.getElementById('color');
+    const preview = document.getElementById('preview');
+    const results = document.getElementById('results');
+    const status = document.getElementById('status');
+    const processBtn = document.getElementById('processBtn');
+    const downloadZipBtn = document.getElementById('downloadZipBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    let selectedFiles = [];
+    let processed = [];
+    let logoDataUrl = null;
+
+    const readFileAsDataURL = (file) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const loadImage = (src) => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+
+    const positionRect = (canvasW, canvasH, wmW, wmH, where) => {
+      const padding = Math.max(12, Math.round(canvasW * 0.02));
+      let x = padding;
+      let y = padding;
+      if (where === 'bottom-right') {
+        x = canvasW - wmW - padding;
+        y = canvasH - wmH - padding;
+      } else if (where === 'bottom-left') {
+        x = padding;
+        y = canvasH - wmH - padding;
+      } else if (where === 'top-right') {
+        x = canvasW - wmW - padding;
+        y = padding;
+      } else if (where === 'center') {
+        x = (canvasW - wmW) / 2;
+        y = (canvasH - wmH) / 2;
+      }
+      return { x, y };
+    };
+
+    const updatePreview = async () => {
+      preview.innerHTML = '';
+      selectedFiles = Array.from(imagesInput.files || []);
+      for (const file of selectedFiles) {
+        const src = await readFileAsDataURL(file);
+        const item = document.createElement('div');
+        item.className = 'thumb';
+        item.innerHTML = `<img alt="${file.name}"><div class="meta">${file.name}</div>`;
+        item.querySelector('img').src = src;
+        preview.appendChild(item);
+      }
+      status.textContent = selectedFiles.length ? `${selectedFiles.length} image(s) ready.` : 'Choose one or more images to begin.';
+    };
+
+    const setStatus = (message) => {
+      status.textContent = message;
+    };
+
+    const makeWatermark = async (file) => {
+      const imageDataUrl = await readFileAsDataURL(file);
+      const image = await loadImage(imageDataUrl);
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth || image.width;
+      canvas.height = image.naturalHeight || image.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+
+      const opacityValueNum = Number(opacity.value) / 100;
+      const scaleValueNum = Number(scale.value) / 100;
+
+      if (wmType.value === 'text') {
+        const text = wmText.value.trim() || '© My Brand';
+        const fontSize = Math.max(18, Math.round(canvas.width * (0.03 + scaleValueNum * 0.05)));
+        ctx.save();
+        ctx.globalAlpha = opacityValueNum;
+        ctx.fillStyle = color.value || '#ffffff';
+        ctx.font = `700 ${fontSize}px Arial, Helvetica, sans-serif`;
+        ctx.textBaseline = 'top';
+        const metrics = ctx.measureText(text);
+        const textW = metrics.width;
+        const textH = fontSize * 1.2;
+        const { x, y } = positionRect(canvas.width, canvas.height, textW, textH, position.value);
+        ctx.shadowColor = 'rgba(0,0,0,0.35)';
+        ctx.shadowBlur = 8;
+        ctx.fillText(text, x, y);
+        ctx.restore();
+      } else {
+        if (!logoDataUrl) {
+          throw new Error('Please choose a logo image for logo watermark mode.');
+        }
+        const logo = await loadImage(logoDataUrl);
+        const targetW = Math.max(40, Math.round(canvas.width * scaleValueNum));
+        const ratio = logo.naturalWidth / logo.naturalHeight;
+        const targetH = Math.round(targetW / ratio);
+        const { x, y } = positionRect(canvas.width, canvas.height, targetW, targetH, position.value);
+        ctx.save();
+        ctx.globalAlpha = opacityValueNum;
+        ctx.drawImage(logo, x, y, targetW, targetH);
+        ctx.restore();
+      }
+
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve({
+            name: file.name.replace(/\.[^.]+$/, '') + '-watermarked.png',
+            blob,
+            url: URL.createObjectURL(blob),
+          });
+        }, 'image/png', 1);
+      });
+    };
+
+    const renderResults = () => {
+      results.innerHTML = '';
+      for (const item of processed) {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <img alt="${item.name}">
+          <div class="meta">
+            <strong>${item.name}</strong>
+            <a href="${item.url}" download="${item.name}">Download</a>
+          </div>
+        `;
+        card.querySelector('img').src = item.url;
+        results.appendChild(card);
+      }
+      downloadZipBtn.disabled = processed.length === 0;
+    };
+
+    wmType.addEventListener('change', () => {
+      const isText = wmType.value === 'text';
+      textGroup.classList.toggle('hidden', !isText);
+      logoGroup.classList.toggle('hidden', isText);
+    });
+
+    imagesInput.addEventListener('change', updatePreview);
+    opacity.addEventListener('input', () => opacityValue.textContent = opacity.value);
+    scale.addEventListener('input', () => scaleValue.textContent = scale.value);
+
+    wmLogo.addEventListener('change', async () => {
+      const file = wmLogo.files && wmLogo.files[0];
+      logoDataUrl = file ? await readFileAsDataURL(file) : null;
+    });
+
+    processBtn.addEventListener('click', async () => {
+      if (!selectedFiles.length) {
+        setStatus('Choose at least one image first.');
+        return;
+      }
+      try {
+        processBtn.disabled = true;
+        downloadZipBtn.disabled = true;
+        processed.forEach(item => URL.revokeObjectURL(item.url));
+        processed = [];
+        setStatus('Processing images...');
+
+        for (const file of selectedFiles) {
+          const result = await makeWatermark(file);
+          processed.push(result);
+        }
+
+        renderResults();
+        setStatus(`Processed ${processed.length} image(s).`);
+      } catch (error) {
+        console.error(error);
+        setStatus(error.message || 'Unable to process images.');
+      } finally {
+        processBtn.disabled = false;
+      }
+    });
+
+    downloadZipBtn.addEventListener('click', async () => {
+      if (!processed.length || typeof JSZip === 'undefined') {
+        return;
+      }
+      const zip = new JSZip();
+      const folder = zip.folder('watermarked-images');
+      for (const item of processed) {
+        folder.file(item.name, item.blob);
+      }
+      setStatus('Creating ZIP...');
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'watermarked-images.zip';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      setStatus('ZIP ready.');
+    });
+
+    clearBtn.addEventListener('click', () => {
+      imagesInput.value = '';
+      wmLogo.value = '';
+      logoDataUrl = null;
+      selectedFiles = [];
+      processed.forEach(item => URL.revokeObjectURL(item.url));
+      processed = [];
+      preview.innerHTML = '';
+      results.innerHTML = '';
+      downloadZipBtn.disabled = true;
+      setStatus('Choose one or more images to begin.');
+    });
+
+    opacityValue.textContent = opacity.value;
+    scaleValue.textContent = scale.value;
+  </script>
+</body>
+</html>
