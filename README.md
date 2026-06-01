@@ -20,5 +20,5 @@ Open `http://127.0.0.1:5000`, upload your images, enter watermark text, and clic
 ## Test
 
 ```bash
-python -m unittest -v
+python -m unittest discover -s tests -v
 ```
